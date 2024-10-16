@@ -1,6 +1,5 @@
 #include <windows.h>
 #define WINHOOK_IMPLEMENTATION
-#define WINHOOK_NO3RDLIB
 #include "winhook.h"
 
 #ifndef _DEBUG

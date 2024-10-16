@@ -1,14 +1,14 @@
-# ReverseTool
+# Toolkit Win Reverse
 
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/yurisizuku/reversetool?color=green&label=ReverseTool)![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/YuriSizuku/ReverseTool/build_wintools.yml?label=build_wintools)  
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/yurisizuku/toolkit-WinReverse?color=green&label=WinReverse)![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/YuriSizuku/toolkit-WinReverse/build.yml?label=build)  
 
-🍀 Libraries (single header file) for my reverse projects.  
-Scripts for localization are moved to [LocalizationTool](https://github.com/YuriSizuku/LocalizationTool).  
+🍀 Libraries (mostly use single header file) for my reverse projects.  
+Scripts for localization are moved to [Toolkit Localization](https://github.com/YuriSizuku/toolkit-Localization).  
 
 Projects based on this repo:  
 
-- [MemoryModule](https://github.com/YuriSizuku/MemoryModule)  
-- [MiniVFS](https://github.com/YuriSizuku/MiniVFS)
+- [MemoryModule](https://github.com/YuriSizuku/win-MemoryModule)  
+- [MiniVFS](https://github.com/YuriSizuku/win-MemoryVFS)
 - [GalgameReverse](https://github.com/YuriSizuku/GalgameReverse)  
 
 ## Components

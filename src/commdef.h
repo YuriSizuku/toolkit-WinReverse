@@ -20,6 +20,9 @@
 #ifndef INLINE
 #define INLINE __forceinline
 #endif
+#ifndef NOINLINE
+#define NOINLINE __declspec(noinline)
+#endif
 #ifndef EXPORT
 #define EXPORT __declspec(dllexport)
 #endif
@@ -32,6 +35,9 @@
 #endif
 #ifndef INLINE
 #define INLINE __attribute__((always_inline)) inline
+#endif
+#ifndef NOINLINE
+#define NOINLINE __attribute__((noinline))
 #endif
 #ifndef EXPORT 
 #define EXPORT __attribute__((visibility("default")))

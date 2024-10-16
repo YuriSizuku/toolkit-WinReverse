@@ -5,7 +5,6 @@
 #define WINHOOK_IMPLEMENTATION
 #define WINHOOK_USESHELLCODE
 #endif
-#define WINHOOK_NO3RDLIB
 #include "winhook.h"
 
 void test_patchpattern()
