@@ -198,17 +198,6 @@ BOOL winhook_iathook(LPCSTR targetDllName, PROC pfnOrg, PROC pfgNew)
 {
     return winhook_iathookmodule(targetDllName, NULL, pfnOrg, pfgNew);
 }
-    
-/**
- * inline hooks wrapper, 
- * @param pfnTargets -> @param pfnNews, save origin pointers in @param pfnOlds
- * @return: success hook numbers
-*/
-WINHOOK_API
-int winhook_inlinehooks(PVOID pfnTargets[], PVOID pfnNews[], PVOID pfnOlds[], int n);
-
-WINHOOK_API
-int winhook_inlineunhooks(PVOID pfnTargets[], PVOID pfnNews[], PVOID pfnOlds[], int n);
 
 #ifdef WINHOOK_IMPLEMENTATION
 #include <stdio.h>

@@ -67,12 +67,12 @@
 #define LOG_LEVEL_INFO 3
 #define LOG_LEVEL_DEBUG 4
 #define LOG_LEVEL_VERBOSE 5
-#define LogTagPrintf(format, tag, ...) \
+#define LogTagPrintf(format, tag, ...) {\
     printf("[%s,%d,%s,%s] ", __FILE__, __LINE__, __func__, tag);\
-    printf(format, ##__VA_ARGS__);
-#define LogTagWprintf(format, tag, ...) \
+    printf(format, ##__VA_ARGS__);}
+#define LogTagWprintf(format, tag, ...) {\
     printf("[%s,%d,%s,%s] ", __FILE__, __LINE__, __func__, tag);\
-    wprintf(format, ##__VA_ARGS__);
+    wprintf(format, ##__VA_ARGS__);}
 #define DummyPrintf(format, ...)
 #define LOG(format, ...) LogTagPrintf(format, "I", ##__VA_ARGS__)
 #define LOGL(format, ...) LogTagWprintf(format, "I", ##__VA_ARGS__)

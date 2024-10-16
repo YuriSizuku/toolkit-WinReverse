@@ -15,8 +15,7 @@ void test_findkernel32()
 
 void test_findloadlibrarya()
 {
-
-    void *func = (void*)LoadLibraryA;
+    void *func = (void*)GetProcAddress(GetModuleHandleA("kernel32.dll"), "LoadLibraryA"); // compatible with tcc
     void *func2 = winpe_findloadlibrarya();
     printf("[test_findloadlibrarya] LoadLibraryA=%p\n", func2);
     assert(func==func2);
@@ -24,7 +23,7 @@ void test_findloadlibrarya()
 
 void test_findgetprocaddress()
 {
-    void *func = (void*)GetProcAddress;
+    void *func = (void*)GetProcAddress(GetModuleHandleA("kernel32.dll"), "GetProcAddress"); // compatible with tcc
     void *func2 = winpe_findgetprocaddress();
     printf("[test_findgetprocaddress] GetProcAddress=%p\n", func2);
     assert(func==func2);

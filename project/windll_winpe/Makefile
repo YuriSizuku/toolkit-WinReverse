@@ -28,7 +28,7 @@ endif
 ifneq (,$(findstring d, $(BUILD_TYPE)))
 CFLAGS+=-g -D_DEBUG
 else
-CFLAGS+=-O3
+CFLAGS+=-O3 # winpe_memGetProcAddress might fail if use inline and -O3 by llvm-clang
 endif
 ifneq (,$(findstring tcc, $(CC)))
 LDFLAGS= # tcc can not remove at at stdcall in i686
