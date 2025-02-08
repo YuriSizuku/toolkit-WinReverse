@@ -1,6 +1,6 @@
 /**
  * windows dyamic hook util functions wrappers
- *    v0.3.3, developed by devseed
+ *    v0.3.4, developed by devseed
  * 
  * macros:
  *    WINHOOK_IMPLEMENT, include defines of each function
@@ -12,7 +12,7 @@
 
 #ifndef _WINHOOK_H
 #define _WINHOOK_H
-#define WINHOOK_VERSION 330
+#define WINHOOK_VERSION 340
 
 #ifdef USECOMPAT
 #include "commdef_v100.h"
@@ -164,7 +164,7 @@ int winhook_patchmemoryips(const char* pattern, size_t base)
 }
     
 /**
- * search the pattern like "ab 12 ?? 34"
+ * search the pattern like "ab 12 ?? 34" or "ab 12 ? 34"
  * @return the matched address
 */
 WINHOOK_API
@@ -585,33 +585,53 @@ void* winhook_searchmemory(void* addr,
         int j = 0;
         int matchflag = 1;
         matchend = 0;
-        while (pattern[j])
+        while (1)
         {
             if (pattern[j] == 0x20)
             {
                 j++;
                 continue;
             }
-            char _c1 = (((char*)addr)[i+matchend]>>4) & 0x0f;
+            if (!pattern[j]) break;
+
+            char _c1 = (((char*)addr)[i + matchend] >> 4 ) & 0x0f;
             _c1 = _c1 < 10 ? _c1 + '0' : (_c1 - 10) + 'A';
-            char _c2 = (((char*)addr)[i+matchend]&0xf) & 0x0f;
+            char _c2 = (((char*)addr)[i + matchend] & 0xf) & 0x0f;
             _c2 = _c2 < 10 ? _c2 + '0' : (_c2 - 10) + 'A';
+            
             if (pattern[j] != '?')
             {
+                
                 if (_c1 != pattern[j] && _c1 + 0x20 != pattern[j])
                 {
                     matchflag = 0;
                     break;
                 }
             }
+            else 
+            {
+                if(!pattern[j + 1]) 
+                {
+                    matchend++;
+                    break;
+                }
+                if (pattern[j + 1] == 0x20) goto winhook_searchmemory_nextchar;
+            }
+
+            if(!pattern[j + 1]) 
+            {
+                matchend++;
+                break;
+            }
             if (pattern[j + 1] != '?')
             {
-                if (_c2 != pattern[j+1] && _c2 + 0x20 != pattern[j+1])
+                if (_c2 != pattern[j + 1] && _c2 + 0x20 != pattern[j + 1])
                 {
                     matchflag = 0;
                     break;
                 }
             }
+winhook_searchmemory_nextchar:
             j += 2;
             matchend++;
         }
@@ -699,4 +719,5 @@ BOOL winhook_iathookpe(LPCSTR targetDllName, void* mempe, PROC pfnOrg, PROC pfnN
  * v0.3.1, add winhook_patchmemory1337, winhook_patchmemoryips
  * v0.3.2, improve macro style, chaneg some of macro to function
  * v0.3.3, seperate some macro to commdef, remove winhook_inlinehook, use stb_minhook directly
+ * v0.3.4, change winhook_searchmemory pattern to xx ? xx xx, or xx ?? xx xx
 */

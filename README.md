@@ -25,4 +25,5 @@ In `project`,  `Makefile` for `gcc` (llvm-mingw or mingw-w64), `tcc` (not suppor
 - `winhook.h`,  single header file for dynamic hook functions, such as IAT hook, inline hook  
 - `winpe.h`, single header file for parsing windows PE structure, adjust RELOC, ADDRS, or IAT  
 - `windyn.h`, single header file for dynamic binding windows system api without IAT.  
-- `winloader.c`, start a exe with a `dll` injected, see [Release](https://github.com/YuriSizuku/ReverseUtil/releases)  
+- `winloader.c`, start a exe with a `dll` injected, see [Release](https://github.com/YuriSizuku/toolkit-WinReverse/releases)  
+- `libversion.c`, version dll proxy to patch.dll, see [Release](https://github.com/YuriSizuku/toolkit-WinReverse/releases)
