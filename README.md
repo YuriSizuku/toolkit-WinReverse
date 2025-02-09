@@ -22,8 +22,8 @@ Projects based on this repo:
 
 In `project`,  `Makefile` for `gcc` (llvm-mingw or mingw-w64), `tcc` (not support inline) and `sln` for `msvc`.  All of them are compatible for `win xp` and above.  
 
-- `winhook.h`,  single header file for dynamic hook functions, such as IAT hook, inline hook  
-- `winpe.h`, single header file for parsing windows PE structure, adjust RELOC, ADDRS, or IAT  
-- `windyn.h`, single header file for dynamic binding windows system api without IAT.  
+- `windyn.h`, single header file for windows dynamic binding system api without IAT
+- `winhook.h`,  single header file for windows dynamic hook and memory util functions
+- `winpe.h`, single header file for windows pe structure, adjusting realoc addrs, or iat
+- `winversion.h`, single header file for windows `version.dll` proxy to patch.dll, see [Release](https://github.com/YuriSizuku/toolkit-WinReverse/releases)
 - `winloader.c`, start a exe with a `dll` injected, see [Release](https://github.com/YuriSizuku/toolkit-WinReverse/releases)  
-- `libversion.c`, version dll proxy to patch.dll, see [Release](https://github.com/YuriSizuku/toolkit-WinReverse/releases)

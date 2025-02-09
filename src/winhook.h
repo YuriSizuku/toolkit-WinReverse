@@ -1,5 +1,5 @@
 /**
- * windows dyamic hook util functions wrappers
+ * windows dynamic hook and memory util functions
  *    v0.3.4, developed by devseed
  * 
  * macros:

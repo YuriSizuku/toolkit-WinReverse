@@ -7,8 +7,15 @@ permissions:
   contents: write
   
 jobs:
-  build_winexe_winloader:
+  build_winreverse:
     runs-on: windows-2019
+    strategy:
+      matrix: 
+        project: 
+          - {dirname: winexe_winloader, targetname: winloader, targetext: exe}
+          - {dirname: windll_winhook, targetname: libwinhook, targetext: dll}
+          - {dirname: windll_winpe, targetname: libwinpe, targetext: dll}
+          - {dirname: windll_winversion, targetname: libwinversion, targetext: dll}
     steps:
     - name: pull and init
       uses: actions/checkout@v3
@@ -18,54 +25,12 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
     
     - name: build target
-      run: .\project\winexe_winloader\release_msvc.bat
+      run: .\project\${{ matrix.project.dirname }}\release_msvc.bat
     
     - name: upload release
       uses: ncipollo/release-action@v1
       if: github.event_name == 'push'
       with:
-        artifacts: "./project/winexe_winloader/build/winloader32.exe,./project/winexe_winloader/build/winloader64.exe"
-        allowUpdates: "true"
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-  build_windll_winhook:
-    runs-on: windows-2019
-    steps:
-    - name: pull and init
-      uses: actions/checkout@v3
-      with: {submodules: true}
-    
-    - name: add msbuild to path
-      uses: microsoft/setup-msbuild@v1.1
-    
-    - name: build target
-      run: .\project\windll_winhook\release_msvc.bat
-    
-    - name: upload release
-      uses: ncipollo/release-action@v1
-      if: github.event_name == 'push'
-      with:
-        artifacts: "./project/windll_winhook/build/libwinhook32.dll,./project/windll_winhook/build/libwinhook64.dll"
-        allowUpdates: "true"
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-  build_windll_winpe:
-    runs-on: windows-2019
-    steps:
-    - name: pull and init
-      uses: actions/checkout@v3
-      with: {submodules: true}
-    
-    - name: add msbuild to path
-      uses: microsoft/setup-msbuild@v1.1
-    
-    - name: build target
-      run: .\project\windll_winpe\release_msvc.bat
-    
-    - name: upload release
-      uses: ncipollo/release-action@v1
-      if: github.event_name == 'push'
-      with:
-        artifacts: "./project/windll_winpe/build/libwinpe32.dll,./project/windll_winpe/build/libwinpe64.dll"
+        artifacts: "./project/${{ matrix.project.dirname }}/build/${{ matrix.project.targetname }}32.${{ matrix.project.targetext }},./project/${{ matrix.project.dirname }}/build/${{ matrix.project.targetname }}64.${{ matrix.project.targetext }}"
         allowUpdates: "true"
         token: ${{ secrets.GITHUB_TOKEN }}

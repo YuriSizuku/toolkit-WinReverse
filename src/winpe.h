@@ -1,5 +1,5 @@
 /**
- * Single header project for windows pe structure, adjusting realoc addrs, or iat. 
+ *  windows pe structure, adjusting realoc addrs, or iat
  *    v0.3.7, developed by devseed
  * 
  * macros:
@@ -51,7 +51,6 @@
 #endif // WINPE_NOINLINE
 
 #define WINPE_API WINPE_API_DEF WINPE_API_EXPORT WINPE_API_INLINE
-
 
 // declear
 #ifdef __cplusplus

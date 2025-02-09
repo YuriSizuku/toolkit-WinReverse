@@ -1,5 +1,5 @@
-/** windows api function pointer define,
- *  functions or macros for dynamic bindings
+/** 
+ *  windows dynamic binding system api without IAT
  *    v0.1.5, developed by devseed
  * 
  * macros:
