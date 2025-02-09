@@ -1,6 +1,6 @@
 /**
  * windows dynamic hook and memory util functions
- *    v0.3.4, developed by devseed
+ *    v0.3.5, developed by devseed
  * 
  * macros:
  *    WINHOOK_IMPLEMENT, include defines of each function
@@ -12,10 +12,10 @@
 
 #ifndef _WINHOOK_H
 #define _WINHOOK_H
-#define WINHOOK_VERSION 340
+#define WINHOOK_VERSION 350
 
 #ifdef USECOMPAT
-#include "commdef_v100.h"
+#include "commdef_v110.h"
 #else
 #include "commdef.h"
 #endif // USECOMPAT
@@ -84,6 +84,12 @@ HANDLE winhook_getprocess(LPCWSTR exename);
 */
 WINHOOK_API
 size_t winhook_getimagebase(HANDLE hprocess);
+
+/**
+ * get the other process image size
+*/
+WINHOOK_API
+size_t winhook_getimagesize(HANDLE hprocess, HMODULE hmod);
 
 /**
  * dynamic inject a dll into a process
@@ -326,6 +332,13 @@ size_t winhook_getimagebase(HANDLE hprocess)
     if (!GetModuleFileNameExA(hprocess, modules[0], modulename, sizeof(modulename))) 
         return 0; // impossible to get module info
     return (size_t)modules[0]; // module 0 is apparently always the EXE itself
+}
+
+size_t winhook_getimagesize(HANDLE hprocess, HMODULE hmod)
+{
+    MODULEINFO info;
+    GetModuleInformation(hprocess, hmod, &info, sizeof(info));
+    return info.SizeOfImage;
 }
 
 BOOL winhook_injectdll(HANDLE hprocess, LPCSTR dllname)
@@ -577,73 +590,7 @@ int winhook_patchmemoryipsex(HANDLE hprocess, const char* pattern, size_t base)
 void* winhook_searchmemory(void* addr, 
     size_t memsize, const char* pattern, size_t* pmatchsize)
 {
-    size_t i = 0;
-    int matchend = 0;
-    void* matchaddr = NULL;
-    while (i < memsize)
-    {
-        int j = 0;
-        int matchflag = 1;
-        matchend = 0;
-        while (1)
-        {
-            if (pattern[j] == 0x20)
-            {
-                j++;
-                continue;
-            }
-            if (!pattern[j]) break;
-
-            char _c1 = (((char*)addr)[i + matchend] >> 4 ) & 0x0f;
-            _c1 = _c1 < 10 ? _c1 + '0' : (_c1 - 10) + 'A';
-            char _c2 = (((char*)addr)[i + matchend] & 0xf) & 0x0f;
-            _c2 = _c2 < 10 ? _c2 + '0' : (_c2 - 10) + 'A';
-            
-            if (pattern[j] != '?')
-            {
-                
-                if (_c1 != pattern[j] && _c1 + 0x20 != pattern[j])
-                {
-                    matchflag = 0;
-                    break;
-                }
-            }
-            else 
-            {
-                if(!pattern[j + 1]) 
-                {
-                    matchend++;
-                    break;
-                }
-                if (pattern[j + 1] == 0x20) goto winhook_searchmemory_nextchar;
-            }
-
-            if(!pattern[j + 1]) 
-            {
-                matchend++;
-                break;
-            }
-            if (pattern[j + 1] != '?')
-            {
-                if (_c2 != pattern[j + 1] && _c2 + 0x20 != pattern[j + 1])
-                {
-                    matchflag = 0;
-                    break;
-                }
-            }
-winhook_searchmemory_nextchar:
-            j += 2;
-            matchend++;
-        }
-        if (matchflag)
-        {
-            matchaddr = (void*)((uint8_t*)addr + i);
-            break;
-        }
-        i++;
-    }
-    if (pmatchsize) *pmatchsize = matchend;
-    return matchaddr;
+    return inl_search(addr, memsize, pattern, pmatchsize);
 }
 
 void* winhook_searchmemoryex(HANDLE hprocess,
@@ -719,5 +666,6 @@ BOOL winhook_iathookpe(LPCSTR targetDllName, void* mempe, PROC pfnOrg, PROC pfnN
  * v0.3.1, add winhook_patchmemory1337, winhook_patchmemoryips
  * v0.3.2, improve macro style, chaneg some of macro to function
  * v0.3.3, seperate some macro to commdef, remove winhook_inlinehook, use stb_minhook directly
- * v0.3.4, change winhook_searchmemory pattern to xx ? xx xx, or xx ?? xx xx
+ * v0.3.4, change winhook_searchmemory pattern to xx ? xx xx, or xx ?? xx xx, 
+ * v0.3.5, add winhook_getimagesize, winhook_searchmemory to inl_search
 */

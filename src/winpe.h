@@ -15,7 +15,7 @@
 #define WINPE_VERSION 370
 
 #ifdef USECOMPAT
-#include "commdef_v100.h"
+#include "commdef_v110.h"
 #else
 #include "commdef.h"
 #endif // USECOMPAT

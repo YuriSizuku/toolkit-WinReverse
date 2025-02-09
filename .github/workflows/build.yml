@@ -33,4 +33,5 @@ jobs:
       with:
         artifacts: "./project/${{ matrix.project.dirname }}/build/${{ matrix.project.targetname }}32.${{ matrix.project.targetext }},./project/${{ matrix.project.dirname }}/build/${{ matrix.project.targetname }}64.${{ matrix.project.targetext }}"
         allowUpdates: "true"
+        replacesArtifacts: "true"
         token: ${{ secrets.GITHUB_TOKEN }}

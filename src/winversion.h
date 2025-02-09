@@ -10,7 +10,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define WIVERSION_VERSION 100
+#define WIVERSION_VERSION 110
 
 #ifdef USECOMPAT
 #include "commdef_v100.h"
