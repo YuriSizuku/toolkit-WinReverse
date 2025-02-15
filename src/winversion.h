@@ -2,6 +2,9 @@
  *  windows version dll proxy, together with winversion.def
  *    v0.1, developed by devseed
  * 
+ *  attention: 
+ *    wine might not be able to use
+ * 
 */
 
 #ifndef _WINVERSION_H
