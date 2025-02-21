@@ -246,7 +246,7 @@ static INLINE size_t inl_hexifya(char *dst, size_t dstlen, const uint8_t *src, s
         }
         if(dstpos + sepsize < dstlen)
         {
-            for(int j=0; j < sepsize; j++)
+            for(size_t j=0; j < sepsize; j++)
             {
                 dst[dstpos++] = sep[j];
             }
@@ -282,7 +282,7 @@ static INLINE size_t inl_hexifyw(wchar_t *dst, size_t dstlen, const uint8_t *src
         }
         if(dstpos + sepsize < dstlen)
         {
-            for(int j=0; j < sepsize; j++)
+            for(size_t j=0; j < sepsize; j++)
             {
                 dst[dstpos++] = sep[j];
             }

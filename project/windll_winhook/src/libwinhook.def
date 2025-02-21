@@ -3,6 +3,7 @@ winhook_getprocess
 winhook_iathookpe
 winhook_injectdll
 winhook_installconsole
+winhook_printversion
 winhook_patchmemoryex
 winhook_patchmemorysex
 winhook_patchmemorypattern

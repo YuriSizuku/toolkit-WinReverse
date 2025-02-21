@@ -3,6 +3,7 @@
 #include <assert.h>
 #if defined (_MSC_VER) 
 #define WINHOOK_IMPLEMENTATION
+#define WINHOOK_USEDYNBIND
 #define WINHOOK_USESHELLCODE
 #endif
 #include "winhook.h"
@@ -131,6 +132,7 @@ void test_startexeinject()
 void test_windyn()
 {
 #ifdef WINDYN_IMPLEMENTATION
+// todo
 #endif
 }
 

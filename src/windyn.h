@@ -1,6 +1,6 @@
 /** 
  *  windows dynamic binding system api without IAT
- *    v0.1.5, developed by devseed
+ *    v0.1.6, developed by devseed
  * 
  * macros:
  *    WINDYN_IMPLEMENT, include defines of each function
@@ -11,7 +11,7 @@
 
 #ifndef _WINDYN_H
 #define _WINDYN_H
-#define WINDYN_VERSION 150
+#define WINDYN_VERSION 160
 
 #ifdef USECOMPAT
 #include "commdef_v110.h"
@@ -69,6 +69,26 @@ typedef FARPROC (WINAPI* PFN_GetProcAddress)(
 
 typedef HMODULE (WINAPI *PFN_GetModuleHandleA)(
     LPCSTR lpModuleName
+);
+
+typedef LPVOID (WINAPI *PFN_VirtualAlloc)(
+    LPVOID lpAddress, 
+    SIZE_T dwSize, 
+    DWORD flAllocationType, 
+    DWORD flProtect
+);
+
+typedef BOOL (WINAPI *PFN_VirtualFree)(
+    LPVOID lpAddress, 
+    SIZE_T dwSize, 
+    DWORD dwFreeType
+);
+
+typedef BOOL(WINAPI *PFN_VirtualProtect)(
+    LPVOID lpAddress, 
+    SIZE_T dwSize, 
+    DWORD flNewProtect, 
+    PDWORD lpflOldProtect
 );
 
 typedef LPVOID (WINAPI *PFN_VirtualAllocEx)(
@@ -317,6 +337,15 @@ typedef NTSTATUS (NTAPI * PFN_NtQueryInformationProcess)(
     WINDYN_FINDEXP((void*)kernel32, name_GetProcAddress, pfnGetProcAddress);\
 }
 
+#define WINDYN_FINDWINAPI(name, pfn) \
+{ \
+    HMODULE kernel32 = NULL; \
+    WINDYN_FINDKERNEL32(kernel32); \
+    PFN_GetProcAddress pfnGetProcAddress = NULL; \
+    WINDYN_FINDGETPROCADDRESS(kernel32, pfnGetProcAddress); \
+    pfn = pfnGetProcAddress(kernel32, name); \
+}
+
 // winapi inline functions declear
 WINDYN_API
 HMODULE WINAPI windyn_GetModuleHandleA(
@@ -330,6 +359,29 @@ WINDYN_API
 FARPROC WINAPI windyn_GetProcAddress(
     HMODULE hModule,
     LPCSTR lpProcName);
+
+WINDYN_API
+LPVOID WINAPI windyn_VirtualAlloc(
+    LPVOID lpAddress, 
+    SIZE_T dwSize, 
+    DWORD flAllocationType, 
+    DWORD flProtect
+);
+
+WINDYN_API
+BOOL WINAPI windyn_VirtualFree(
+    LPVOID lpAddress, 
+    SIZE_T dwSize, 
+    DWORD dwFreeType
+);
+
+WINDYN_API
+BOOL WINAPI windyn_VirtualProtect(
+    LPVOID lpAddress, 
+    SIZE_T dwSize, 
+    DWORD flNewProtect, 
+    PDWORD lpflOldProtect
+);
 
 WINDYN_API
 LPVOID WINAPI windyn_VirtualAllocEx(
@@ -485,35 +537,81 @@ FARPROC WINAPI windyn_GetProcAddress(
     return pfnGetProcAddress(hModule, lpProcName);
 }
 
+LPVOID WINAPI windyn_VirtualAlloc(
+    LPVOID lpAddress, 
+    SIZE_T dwSize, 
+    DWORD flAllocationType, 
+    DWORD flProtect
+)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'A', 'l', 'l', 'o', 'c', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_VirtualAlloc)pfn)(lpAddress, dwSize, flAllocationType, flProtect);
+}
+
+BOOL WINAPI windyn_VirtualFree(
+    LPVOID lpAddress, 
+    SIZE_T dwSize, 
+    DWORD dwFreeType
+)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'F', 'r', 'e', 'e', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_VirtualFree)pfn)(lpAddress, dwSize, dwFreeType);
+}
+
+BOOL WINAPI windyn_VirtualProtect(
+    LPVOID lpAddress, 
+    SIZE_T dwSize, 
+    DWORD flNewProtect, 
+    PDWORD lpflOldProtect
+)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'P', 'r', 'o', 't', 'e', 'c', 't', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_VirtualProtect)pfn)(lpAddress, dwSize, flNewProtect, lpflOldProtect);
+}
+
 LPVOID WINAPI windyn_VirtualAllocEx(
     HANDLE hProcess,
     LPVOID lpAddress,
     SIZE_T dwSize,
     DWORD flAllocationType,
     DWORD flProtect)
-{    
-    HMODULE kernel32 = NULL;
-    WINDYN_FINDKERNEL32(kernel32);
-    PFN_GetProcAddress pfnGetProcAddress = NULL;
-    WINDYN_FINDGETPROCADDRESS(kernel32, pfnGetProcAddress);
-    char name_VirtualAllocEx[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'A', 'l', 'l', 'o', 'c', 'E', 'x', '\0'};
-    PFN_VirtualAllocEx pfnVirtualAllocEx = (PFN_VirtualAllocEx)pfnGetProcAddress(kernel32, name_VirtualAllocEx);
-    return pfnVirtualAllocEx(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
+{   
+    FARPROC pfn = NULL; 
+    char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'A', 'l', 'l', 'o', 'c', 'E', 'x', '\0'};
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_VirtualAllocEx)pfn)(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
 }
 
-// todo
 BOOL WINAPI windyn_VirtualFreeEx(
     HANDLE hProcess,
     LPVOID lpAddress,
     SIZE_T dwSize,
-    DWORD dwFreeType);
+    DWORD dwFreeType)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'F', 'r', 'e', 'e', 'E', 'x', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_VirtualFreeEx)pfn)(hProcess, lpAddress, dwSize, dwFreeType);
+}
 
 BOOL WINAPI windyn_VirtualProtectEx(
     HANDLE hProcess,
     LPVOID lpAddress,
     SIZE_T dwSize,
     DWORD flNewProtect,
-    PDWORD lpflOldProtect);
+    PDWORD lpflOldProtect)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'P', 'r', 'o', 't', 'e', 'c', 't', 'E', 'x', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_VirtualProtectEx)pfn)(hProcess, lpAddress, dwSize, flNewProtect, lpflOldProtect);
+}
 
 BOOL WINAPI windyn_CreateProcessA(
     LPCSTR lpApplicationName,
@@ -525,29 +623,62 @@ BOOL WINAPI windyn_CreateProcessA(
     LPVOID lpEnvironment,
     LPCSTR lpCurrentDirectory,
     LPSTARTUPINFOA lpStartupInfo,
-    LPPROCESS_INFORMATION lpProcessInformation);
+    LPPROCESS_INFORMATION lpProcessInformation)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'C', 'r', 'e', 'a', 't', 'e', 'P', 'r', 'o', 'c', 'e', 's', 's', 'A', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_CreateProcessA)pfn)(lpApplicationName, lpCommandLine, 
+        lpProcessAttributes, lpThreadAttributes, bInheritHandles, 
+        dwCreationFlags, lpEnvironment, lpCurrentDirectory, 
+        lpStartupInfo, lpProcessInformation);
+}
 
 HANDLE WINAPI windyn_OpenProcess(
     DWORD dwDesiredAccess,
     BOOL bInheritHandle,
-    DWORD dwProcessId);
+    DWORD dwProcessId)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'O', 'p', 'e', 'n', 'P', 'r', 'o', 'c', 'e', 's', 's', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_OpenProcess)pfn)(dwDesiredAccess, bInheritHandle, dwProcessId);
+}
 
 HANDLE WINAPI windyn_GetCurrentProcess(
-    VOID);
+    VOID)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'G', 'e', 't', 'C', 'u', 'r', 'r', 'e', 'n', 't', 'P', 'r', 'o', 'c', 'e', 's', 's', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_GetCurrentProcess)pfn)();
+}
 
 BOOL WINAPI windyn_ReadProcessMemory(
     HANDLE hProcess,
     LPCVOID lpBaseAddress,
     LPVOID lpBuffer,
     SIZE_T nSize,
-    SIZE_T* lpNumberOfBytesRead);
+    SIZE_T* lpNumberOfBytesRead)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'R', 'e', 'a', 'd', 'P', 'r', 'o', 'c', 'e', 's', 's', 'M', 'e', 'm', 'o', 'r', 'y', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_ReadProcessMemory)pfn)(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead);
+}
 
 BOOL WINAPI windyn_WriteProcessMemory(
     HANDLE hProcess,
     LPVOID lpBaseAddress,
     LPCVOID lpBuffer,
     SIZE_T nSize,
-    SIZE_T* lpNumberOfBytesWritten);
+    SIZE_T* lpNumberOfBytesWritten)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'W', 'r', 'i', 't', 'e', 'P', 'r', 'o', 'c', 'e', 's', 's', 'M', 'e', 'm', 'o', 'r', 'y', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_WriteProcessMemory)pfn)(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten);
+}
 
 HANDLE WINAPI windyn_CreateRemoteThread(
     HANDLE hProcess,
@@ -556,43 +687,111 @@ HANDLE WINAPI windyn_CreateRemoteThread(
     LPTHREAD_START_ROUTINE lpStartAddress,
     LPVOID lpParameter,
     DWORD dwCreationFlags,
-    LPDWORD lpThreadId);
+    LPDWORD lpThreadId)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'C', 'r', 'e', 'a', 't', 'e', 'R', 'e', 'm', 'o', 't', 'e', 'T', 'h', 'r', 'e', 'a', 'd', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_CreateRemoteThread)pfn)(hProcess, lpThreadAttributes, 
+        dwStackSize, lpStartAddress, lpParameter, 
+        dwCreationFlags, lpThreadId);
+}
 
 HANDLE WINAPI windyn_GetCurrentThread(
-    VOID);
+    VOID)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'G', 'e', 't', 'C', 'u', 'r', 'r', 'e', 'n', 't', 'T', 'h', 'r', 'e', 'a', 'd', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_GetCurrentThread)pfn)();
+}
 
 DWORD WINAPI windyn_SuspendThread(
-    HANDLE hThread);
+    HANDLE hThread)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'S', 'u', 's', 'p', 'e', 'n', 'd', 'T', 'h', 'r', 'e', 'a', 'd', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_SuspendThread)pfn)(hThread);
+}
 
 DWORD WINAPI windyn_ResumeThread(
-    HANDLE hThread);
+    HANDLE hThread)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'R', 'e', 's', 'u', 'm', 'e', 'T', 'h', 'r', 'e', 'a', 'd', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_ResumeThread)pfn)(hThread);
+}
 
 BOOL WINAPI windyn_GetThreadContext(
     HANDLE hThread,
-    LPCONTEXT lpContext);
+    LPCONTEXT lpContext)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'G', 'e', 't', 'T', 'h', 'r', 'e', 'a', 'd', 'C', 'o', 'n', 't', 'e', 'x', 't', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_GetThreadContext)pfn)(hThread, lpContext);
+}
 
 BOOL WINAPI windyn_SetThreadContext(
     HANDLE hThread,
-    CONST CONTEXT* lpContext);
+    CONST CONTEXT* lpContext)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'S', 'e', 't', 'T', 'h', 'r', 'e', 'a', 'd', 'C', 'o', 'n', 't', 'e', 'x', 't', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_SetThreadContext)pfn)(hThread, lpContext);
+}
 
 DWORD WINAPI windyn_WaitForSingleObject(
     HANDLE hHandle,
-    DWORD dwMilliseconds);
+    DWORD dwMilliseconds)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'W', 'a', 'i', 't', 'F', 'o', 'r', 'S', 'i', 'n', 'g', 'l', 'e', 'O', 'b', 'j', 'e', 'c', 't', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_WaitForSingleObject)pfn)(hHandle, dwMilliseconds);
+}
 
 BOOL WINAPI windyn_CloseHandle(
-    HANDLE hObject);
+    HANDLE hObject)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'C', 'l', 'o', 's', 'e', 'H', 'a', 'n', 'd', 'l', 'e', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_CloseHandle)pfn)(hObject);
+}
 
 HANDLE WINAPI windyn_CreateToolhelp32Snapshot(
     DWORD dwFlags,
-    DWORD th32ProcessID);
+    DWORD th32ProcessID)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'C', 'r', 'e', 'a', 't', 'e', 'T', 'o', 'o', 'l', 'h', 'e', 'l', 'p', '3', '2', 'S', 'n', 'a', 'p', 's', 'h', 'o', 't', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_CreateToolhelp32Snapshot)pfn)(dwFlags, th32ProcessID);
+}
 
 BOOL WINAPI windyn_Process32First(
     HANDLE hSnapshot,
-    LPPROCESSENTRY32 lppe);
+    LPPROCESSENTRY32 lppe)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'P', 'r', 'o', 'c', 'e', 's', 's', '3', '2', 'F', 'i', 'r', 's', 't', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_Process32First)pfn)(hSnapshot, lppe);
+}
 
 BOOL WINAPI windyn_Process32Next(
     HANDLE hSnapshot,
-    LPPROCESSENTRY32 lppe);
+    LPPROCESSENTRY32 lppe)
+{
+    FARPROC pfn = NULL;
+    char name[] = { 'P', 'r', 'o', 'c', 'e', 's', 's', '3', '2', 'N', 'e', 'x', 't', '\0' };
+    WINDYN_FINDWINAPI(name, pfn);
+    return ((PFN_Process32Next)pfn)(hSnapshot, lppe);
+}
 
 #endif // WINDYN_IMPLEMENTATION
 
@@ -610,4 +809,5 @@ BOOL WINAPI windyn_Process32Next(
  * v0.1.3, add some inline windows api
  * v0.1.4, improve macro style
  * v0.1.5, seperate some macro to commdef
+ * v0.1.6, add more functions
 */
