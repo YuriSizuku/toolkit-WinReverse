@@ -1,0 +1,49 @@
+{
+    "env": {
+        "llvmmingw" : "${env:LLVMMINGW_HOME}"
+    },
+    "configurations": [
+        {
+            "name": "win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/src/**"
+
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "WINPE_IMPLEMENTATION",
+                "WINHOOK_IMPLEMENTATION", 
+                "WINHOOK_USEDYNBIND"
+            ],
+            "compilerPath": "${llvmmingw}//bin/clang.exe",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "windows-clang-x86"
+        },
+        {
+            "name": "win64",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/src/**"
+
+            ],
+            "defines": [
+                "_DEBUG",
+                "_WIN64",
+                "UNICODE",
+                "_UNICODE",
+                "WINPE_IMPLEMENTATION",
+                "WINHOOK_IMPLEMENTATION", 
+                "WINHOOK_USEDYNBIND"
+            ],
+            "compilerPath": "${llvmmingw}//bin/clang.exe",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "windows-clang-x64"
+        }
+    ],
+    "version": 4
+}

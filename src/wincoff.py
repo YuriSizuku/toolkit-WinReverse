@@ -1,7 +1,8 @@
-"""
+__version__ = "0.1.1"
+__description__  = f"""
 A tool to parse .obj file made by msvc
 and generate them to shellcode byte array
-    v0.1, developed by devseed
+    v{__version__}, developed by devseed
 """
 
 import os
@@ -9,7 +10,7 @@ import struct
 import codecs
 from typing import Union, List, Dict
 
-__version__ = 110
+
 
 class coff_filehdr_t(struct.Struct):
     def __init__(self, data):
@@ -215,17 +216,6 @@ def test_codecvt():
     aa = arraystr2code("0x22,  0x3,04, 0b1111, 235, 44, 0x22,33", "c")
     assert(aa == [0x22, 0x3, 4, 0b1111, 235, 44, 0x22, 33])
     print(aa)
-
-def debug():
-    test_codecvt()
-
-def main():
-    pass
-
-if __name__ == '__main__':
-    #debug()
-    main()
-    pass
 
 """
 history:

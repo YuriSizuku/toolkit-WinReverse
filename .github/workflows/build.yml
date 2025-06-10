@@ -8,7 +8,7 @@ permissions:
   
 jobs:
   build_winreverse:
-    runs-on: windows-2019
+    runs-on: windows-2025
     strategy:
       matrix: 
         project: 
@@ -24,6 +24,23 @@ jobs:
     - name: add msbuild to path
       uses: microsoft/setup-msbuild@v1.1
     
+    - name: prepare enviroment
+      run: |
+        Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
+        $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+        $WorkLoads = '--add Microsoft.VisualStudio.Component.WinXP'
+        $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"", $WorkLoads, '--quiet', '--norestart', '--nocache')
+        $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
+        if ($process.ExitCode -eq 0)
+        {
+            Write-Host "components have been successfully added"
+        }
+        else
+        {
+            Write-Host "components were not installed"
+            exit 1
+        }
+
     - name: build target
       run: .\project\${{ matrix.project.dirname }}\release_msvc.bat
     
@@ -34,4 +51,31 @@ jobs:
         artifacts: "./project/${{ matrix.project.dirname }}/build/${{ matrix.project.targetname }}32.${{ matrix.project.targetext }},./project/${{ matrix.project.dirname }}/build/${{ matrix.project.targetname }}64.${{ matrix.project.targetext }}"
         allowUpdates: "true"
         replacesArtifacts: "true"
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  build_src:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: pull and init
+      uses: actions/checkout@v3
+      with: {submodules: true}
+    - name: install depends
+      run: |
+        pip3 install lief keystone-engine
+
+    - name: build pysrc
+      run: |
+        chmod +x project/winsrc_all/*.sh 
+        bash project/winsrc_all/build_src.sh
+        cd project/winsrc_all
+        archive_name=WinReverseSrc_${{ github.ref_name }}
+        7z a ${archive_name}.7z build
+        7z rn ${archive_name}.7z build ${archive_name}
+
+    - name: create a release
+      uses: ncipollo/release-action@v1
+      if: github.event_name == 'push'
+      with:
+        artifacts: "project/winsrc_all/*.7z"
+        allowUpdates: "true"
         token: ${{ secrets.GITHUB_TOKEN }}

@@ -5,7 +5,7 @@
 
 #ifndef _COMMDEF_H
 #define _COMMDEF_H
-#define COMMDEF_VERSION 110
+#define COMMDEF_VERSION "0.1.1"
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -12,10 +12,10 @@
 
 #ifndef _WINHOOK_H
 #define _WINHOOK_H
-#define WINHOOK_VERSION 360
+#define WINHOOK_VERSION "0.3.6"
 
 #ifdef USECOMPAT
-#include "commdef_v110.h"
+#include "commdef_v0_1_1.h"
 #else
 #include "commdef.h"
 #endif // USECOMPAT

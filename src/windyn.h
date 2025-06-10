@@ -11,10 +11,10 @@
 
 #ifndef _WINDYN_H
 #define _WINDYN_H
-#define WINDYN_VERSION 160
+#define WINDYN_VERSION "0.1.6"
 
 #ifdef USECOMPAT
-#include "commdef_v110.h"
+#include "commdef_v0_1_1.h"
 #else
 #include "commdef.h"
 #endif // USECOMPAT

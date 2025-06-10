@@ -1,6 +1,6 @@
 /**
  *  windows version dll proxy, together with winversion.def
- *    v0.1, developed by devseed
+ *    v0.1.1, developed by devseed
  * 
  *  attention: 
  *    wine might not be able to use
@@ -13,10 +13,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define WIVERSION_VERSION 110
+#define WIVERSION_VERSION "0.1.1"
 
 #ifdef USECOMPAT
-#include "commdef_v100.h"
+#include "commdef_v0_1_1.h"
 #else
 #include "commdef.h"
 #endif // USECOMPAT

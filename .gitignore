@@ -13,7 +13,7 @@
 *.vcxproj.user
 
 .vs
-.vscode
+.vscode/settings.json
 __pycache__
 
 project/**/build/*
