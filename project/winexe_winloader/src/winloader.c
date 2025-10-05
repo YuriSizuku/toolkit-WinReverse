@@ -9,12 +9,12 @@
 int main(int argc, char *argv[])
 {
 	char exepath[MAX_PATH] = {0};
-	char *cmdstr = NULL;
 	char dllpath[MAX_PATH] = {0};
+	char* cmdstr = NULL;
 
-	printf("winloader v0.1, developed by devseed\n"
+	printf("winloader v0.1.1, developed by devseed\n"
 		"usage:\n"
-		"winloader // if the name is xxx_yyy.exe, start yyy.exe\n"
+		"winloader // if the name is xxx_yyy.exe, start xxx.exe\n"
 		"winloader exepath, cmdstr // will be null, dll has the same name as exe\n"
 		"winloader exepath dllpath\n"
 		"winloader exepath dllpath cmdstr\n\n"
@@ -24,11 +24,12 @@ int main(int argc, char *argv[])
 	{
 	case 1:
 	{
-		int start = (int)strlen(argv[0]);
-		while (start > 0 && argv[0][start] != '\\') start--;
-		while (argv[0][start] != '\0' && argv[0][start] != '_') start++;
-		start++;
-		strcpy(exepath, argv[0] + start);
+		int end = (int)(strstr(argv[0], ".exe") - argv[0]);
+		while (end > 0 && argv[0][end] != '_') end--;
+		printf("%d\n", end);
+		strncpy(exepath, argv[0], end);
+		exepath[end] = '\0';
+		strcat(exepath, ".exe");
 		strcpy(dllpath, exepath);
 		strcpy(dllpath + strlen(dllpath) - 4, ".dll");
 		break;
