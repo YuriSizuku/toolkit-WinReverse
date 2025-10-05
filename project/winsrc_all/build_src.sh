@@ -26,5 +26,3 @@ build_csrc src $(dirname $0)/build commdef
 build_csrc src $(dirname $0)/build winhook
 build_csrc src $(dirname $0)/build windyn
 build_csrc src $(dirname $0)/build winpe
-build_csrc src $(dirname $0)/build winversion
-cp -f src/winversion.def $(dirname $0)/build/winversion.def

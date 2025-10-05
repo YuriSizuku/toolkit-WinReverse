@@ -12,10 +12,10 @@ jobs:
     strategy:
       matrix: 
         project: 
-          - {dirname: winexe_winloader, targetname: winloader, targetext: exe}
           - {dirname: windll_winhook, targetname: libwinhook, targetext: dll}
           - {dirname: windll_winpe, targetname: libwinpe, targetext: dll}
-          - {dirname: windll_winversion, targetname: libwinversion, targetext: dll}
+          # - {dirname: winexe_winloader, targetname: winloader, targetext: exe}
+          # - {dirname: windll_winversion, targetname: libwinversion, targetext: dll}
     steps:
     - name: pull and init
       uses: actions/checkout@v3
