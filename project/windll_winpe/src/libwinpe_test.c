@@ -43,8 +43,8 @@ void test_memforwardexp(HMODULE hmod, const char *funcname)
     size_t exprva = (size_t)winpe_memfindexp(hmod, funcname) - (size_t)hmod;
     printf("%x\n", exprva);
     void *func = winpe_memforwardexp(hmod, exprva, 
-        (PFN_LoadLibraryA)winpe_findloadlibrarya(), 
-        (PFN_GetProcAddress)winpe_memfindexp);
+        (T_LoadLibraryA)winpe_findloadlibrarya(), 
+        (T_GetProcAddress)winpe_memfindexp);
     void *func2 = winpe_memGetProcAddress(hmod, funcname);
     printf("[test_memforwardexp] hmod=%p funcname=%s func=%p func2=%p\n", 
                 hmod, funcname, func, func2);

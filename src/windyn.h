@@ -1,6 +1,6 @@
 /** 
  *  windows dynamic binding system api without IAT
- *    v0.1.6, developed by devseed
+ *    v0.1.7, developed by devseed
  * 
  * macros:
  *    WINDYN_IMPLEMENT, include defines of each function
@@ -11,7 +11,7 @@
 
 #ifndef _WINDYN_H
 #define _WINDYN_H
-#define WINDYN_VERSION "0.1.6"
+#define WINDYN_VERSION "0.1.7"
 
 #ifdef USECOMPAT
 #include "commdef_v0_1_1.h"
@@ -58,40 +58,40 @@ extern "C" {
 #include <tlhelp32.h>
 
 // function pointer declear
-typedef HMODULE (WINAPI* PFN_LoadLibraryA)(
+typedef HMODULE (WINAPI* T_LoadLibraryA)(
     LPCSTR lpLibFileName
 );
 
-typedef FARPROC (WINAPI* PFN_GetProcAddress)(
+typedef FARPROC (WINAPI* T_GetProcAddress)(
     HMODULE hModule, 
     LPCSTR lpProcName
 );
 
-typedef HMODULE (WINAPI *PFN_GetModuleHandleA)(
+typedef HMODULE (WINAPI *T_GetModuleHandleA)(
     LPCSTR lpModuleName
 );
 
-typedef LPVOID (WINAPI *PFN_VirtualAlloc)(
+typedef LPVOID (WINAPI *T_VirtualAlloc)(
     LPVOID lpAddress, 
     SIZE_T dwSize, 
     DWORD flAllocationType, 
     DWORD flProtect
 );
 
-typedef BOOL (WINAPI *PFN_VirtualFree)(
+typedef BOOL (WINAPI *T_VirtualFree)(
     LPVOID lpAddress, 
     SIZE_T dwSize, 
     DWORD dwFreeType
 );
 
-typedef BOOL(WINAPI *PFN_VirtualProtect)(
+typedef BOOL(WINAPI *T_VirtualProtect)(
     LPVOID lpAddress, 
     SIZE_T dwSize, 
     DWORD flNewProtect, 
     PDWORD lpflOldProtect
 );
 
-typedef LPVOID (WINAPI *PFN_VirtualAllocEx)(
+typedef LPVOID (WINAPI *T_VirtualAllocEx)(
     HANDLE hProcess, 
     LPVOID lpAddress, 
     SIZE_T dwSize, 
@@ -99,14 +99,14 @@ typedef LPVOID (WINAPI *PFN_VirtualAllocEx)(
     DWORD flProtect
 );
 
-typedef BOOL (WINAPI *PFN_VirtualFreeEx)(
+typedef BOOL (WINAPI *T_VirtualFreeEx)(
     HANDLE hProcess, 
     LPVOID lpAddress, 
     SIZE_T dwSize, 
     DWORD dwFreeType
 );
 
-typedef BOOL (WINAPI *PFN_VirtualProtectEx)(
+typedef BOOL (WINAPI *T_VirtualProtectEx)(
     HANDLE hProcess, 
     LPVOID lpAddress, 
     SIZE_T dwSize, 
@@ -114,7 +114,7 @@ typedef BOOL (WINAPI *PFN_VirtualProtectEx)(
     PDWORD lpflOldProtect
 );
 
-typedef BOOL (WINAPI *PFN_CreateProcessA)(
+typedef BOOL (WINAPI *T_CreateProcessA)(
     LPCSTR lpApplicationName,
     LPSTR lpCommandLine,
     LPSECURITY_ATTRIBUTES lpProcessAttributes,
@@ -127,17 +127,17 @@ typedef BOOL (WINAPI *PFN_CreateProcessA)(
     LPPROCESS_INFORMATION lpProcessInformation
 );
 
-typedef HANDLE (WINAPI *PFN_OpenProcess)(
+typedef HANDLE (WINAPI *T_OpenProcess)(
     DWORD dwDesiredAccess, 
     BOOL bInheritHandle, 
     DWORD dwProcessId
 );
 
-typedef HANDLE (WINAPI *PFN_GetCurrentProcess)(
+typedef HANDLE (WINAPI *T_GetCurrentProcess)(
     VOID
 );
 
-typedef BOOL (WINAPI *PFN_ReadProcessMemory)(
+typedef BOOL (WINAPI *T_ReadProcessMemory)(
     HANDLE hProcess, 
     LPCVOID lpBaseAddress, 
     LPVOID lpBuffer, 
@@ -145,7 +145,7 @@ typedef BOOL (WINAPI *PFN_ReadProcessMemory)(
     SIZE_T* lpNumberOfBytesRead
 );
 
-typedef BOOL (WINAPI *PFN_WriteProcessMemory)(
+typedef BOOL (WINAPI *T_WriteProcessMemory)(
     HANDLE hProcess, 
     LPVOID lpBaseAddress, 
     LPCVOID lpBuffer, 
@@ -153,7 +153,7 @@ typedef BOOL (WINAPI *PFN_WriteProcessMemory)(
     SIZE_T* lpNumberOfBytesWritten
 );
 
-typedef HANDLE (WINAPI *PFN_CreateRemoteThread)(
+typedef HANDLE (WINAPI *T_CreateRemoteThread)(
     HANDLE hProcess, 
     LPSECURITY_ATTRIBUTES lpThreadAttributes, 
     SIZE_T dwStackSize, 
@@ -163,53 +163,53 @@ typedef HANDLE (WINAPI *PFN_CreateRemoteThread)(
     LPDWORD lpThreadId
 );
 
-typedef HANDLE (WINAPI *PFN_GetCurrentThread)(
+typedef HANDLE (WINAPI *T_GetCurrentThread)(
     VOID
 );
 
-typedef DWORD (WINAPI *PFN_SuspendThread)(
+typedef DWORD (WINAPI *T_SuspendThread)(
     HANDLE hThread
 );
 
-typedef DWORD (WINAPI *PFN_ResumeThread)(
+typedef DWORD (WINAPI *T_ResumeThread)(
     HANDLE hThread
 );
 
-typedef BOOL (WINAPI *PFN_GetThreadContext)(
+typedef BOOL (WINAPI *T_GetThreadContext)(
     HANDLE hThread, 
     LPCONTEXT lpContext
 );
 
-typedef BOOL (WINAPI *PFN_SetThreadContext)(
+typedef BOOL (WINAPI *T_SetThreadContext)(
     HANDLE hThread, 
     CONST CONTEXT* lpContext
 );
 
-typedef DWORD (WINAPI *PFN_WaitForSingleObject)(
+typedef DWORD (WINAPI *T_WaitForSingleObject)(
     HANDLE hHandle, 
     DWORD dwMilliseconds
 );
 
-typedef BOOL (WINAPI *PFN_CloseHandle)(
+typedef BOOL (WINAPI *T_CloseHandle)(
     HANDLE hObject
 );
 
-typedef HANDLE (WINAPI *PFN_CreateToolhelp32Snapshot)(
+typedef HANDLE (WINAPI *T_CreateToolhelp32Snapshot)(
     DWORD dwFlags, 
     DWORD th32ProcessID
 );
 
-typedef BOOL (WINAPI *PFN_Process32First)(
+typedef BOOL (WINAPI *T_Process32First)(
     HANDLE hSnapshot,
     LPPROCESSENTRY32 lppe
 );
 
-typedef BOOL (WINAPI *PFN_Process32Next)(
+typedef BOOL (WINAPI *T_Process32Next)(
     HANDLE hSnapshot,
     LPPROCESSENTRY32 lppe
 );
 
-typedef NTSTATUS (NTAPI * PFN_NtQueryInformationProcess)(
+typedef NTSTATUS (NTAPI * T_NtQueryInformationProcess)(
 	IN HANDLE ProcessHandle,
 	IN PROCESSINFOCLASS ProcessInformationClass,
 	OUT PVOID ProcessInformation,
@@ -341,7 +341,7 @@ typedef NTSTATUS (NTAPI * PFN_NtQueryInformationProcess)(
 { \
     HMODULE kernel32 = NULL; \
     WINDYN_FINDKERNEL32(kernel32); \
-    PFN_GetProcAddress pfnGetProcAddress = NULL; \
+    T_GetProcAddress pfnGetProcAddress = NULL; \
     WINDYN_FINDGETPROCADDRESS(kernel32, pfnGetProcAddress); \
     pfn = pfnGetProcAddress(kernel32, name); \
 }
@@ -521,7 +521,7 @@ HMODULE WINAPI windyn_LoadLibraryA(
 {
     HMODULE kernel32 = NULL;
     WINDYN_FINDKERNEL32(kernel32);
-    PFN_LoadLibraryA pfnLoadLibraryA = NULL;
+    T_LoadLibraryA pfnLoadLibraryA = NULL;
     WINDYN_FINDLOADLIBRARYA(kernel32, pfnLoadLibraryA);
     return pfnLoadLibraryA(lpLibFileName);
 }
@@ -532,7 +532,7 @@ FARPROC WINAPI windyn_GetProcAddress(
 {
     HMODULE kernel32 = NULL;
     WINDYN_FINDKERNEL32(kernel32);
-    PFN_GetProcAddress pfnGetProcAddress = NULL;
+    T_GetProcAddress pfnGetProcAddress = NULL;
     WINDYN_FINDGETPROCADDRESS(kernel32, pfnGetProcAddress);
     return pfnGetProcAddress(hModule, lpProcName);
 }
@@ -547,7 +547,7 @@ LPVOID WINAPI windyn_VirtualAlloc(
     FARPROC pfn = NULL;
     char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'A', 'l', 'l', 'o', 'c', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_VirtualAlloc)pfn)(lpAddress, dwSize, flAllocationType, flProtect);
+    return ((T_VirtualAlloc)pfn)(lpAddress, dwSize, flAllocationType, flProtect);
 }
 
 BOOL WINAPI windyn_VirtualFree(
@@ -559,7 +559,7 @@ BOOL WINAPI windyn_VirtualFree(
     FARPROC pfn = NULL;
     char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'F', 'r', 'e', 'e', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_VirtualFree)pfn)(lpAddress, dwSize, dwFreeType);
+    return ((T_VirtualFree)pfn)(lpAddress, dwSize, dwFreeType);
 }
 
 BOOL WINAPI windyn_VirtualProtect(
@@ -572,7 +572,7 @@ BOOL WINAPI windyn_VirtualProtect(
     FARPROC pfn = NULL;
     char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'P', 'r', 'o', 't', 'e', 'c', 't', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_VirtualProtect)pfn)(lpAddress, dwSize, flNewProtect, lpflOldProtect);
+    return ((T_VirtualProtect)pfn)(lpAddress, dwSize, flNewProtect, lpflOldProtect);
 }
 
 LPVOID WINAPI windyn_VirtualAllocEx(
@@ -585,7 +585,7 @@ LPVOID WINAPI windyn_VirtualAllocEx(
     FARPROC pfn = NULL; 
     char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'A', 'l', 'l', 'o', 'c', 'E', 'x', '\0'};
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_VirtualAllocEx)pfn)(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
+    return ((T_VirtualAllocEx)pfn)(hProcess, lpAddress, dwSize, flAllocationType, flProtect);
 }
 
 BOOL WINAPI windyn_VirtualFreeEx(
@@ -597,7 +597,7 @@ BOOL WINAPI windyn_VirtualFreeEx(
     FARPROC pfn = NULL;
     char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'F', 'r', 'e', 'e', 'E', 'x', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_VirtualFreeEx)pfn)(hProcess, lpAddress, dwSize, dwFreeType);
+    return ((T_VirtualFreeEx)pfn)(hProcess, lpAddress, dwSize, dwFreeType);
 }
 
 BOOL WINAPI windyn_VirtualProtectEx(
@@ -610,7 +610,7 @@ BOOL WINAPI windyn_VirtualProtectEx(
     FARPROC pfn = NULL;
     char name[] = { 'V', 'i', 'r', 't', 'u', 'a', 'l', 'P', 'r', 'o', 't', 'e', 'c', 't', 'E', 'x', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_VirtualProtectEx)pfn)(hProcess, lpAddress, dwSize, flNewProtect, lpflOldProtect);
+    return ((T_VirtualProtectEx)pfn)(hProcess, lpAddress, dwSize, flNewProtect, lpflOldProtect);
 }
 
 BOOL WINAPI windyn_CreateProcessA(
@@ -628,7 +628,7 @@ BOOL WINAPI windyn_CreateProcessA(
     FARPROC pfn = NULL;
     char name[] = { 'C', 'r', 'e', 'a', 't', 'e', 'P', 'r', 'o', 'c', 'e', 's', 's', 'A', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_CreateProcessA)pfn)(lpApplicationName, lpCommandLine, 
+    return ((T_CreateProcessA)pfn)(lpApplicationName, lpCommandLine, 
         lpProcessAttributes, lpThreadAttributes, bInheritHandles, 
         dwCreationFlags, lpEnvironment, lpCurrentDirectory, 
         lpStartupInfo, lpProcessInformation);
@@ -642,7 +642,7 @@ HANDLE WINAPI windyn_OpenProcess(
     FARPROC pfn = NULL;
     char name[] = { 'O', 'p', 'e', 'n', 'P', 'r', 'o', 'c', 'e', 's', 's', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_OpenProcess)pfn)(dwDesiredAccess, bInheritHandle, dwProcessId);
+    return ((T_OpenProcess)pfn)(dwDesiredAccess, bInheritHandle, dwProcessId);
 }
 
 HANDLE WINAPI windyn_GetCurrentProcess(
@@ -651,7 +651,7 @@ HANDLE WINAPI windyn_GetCurrentProcess(
     FARPROC pfn = NULL;
     char name[] = { 'G', 'e', 't', 'C', 'u', 'r', 'r', 'e', 'n', 't', 'P', 'r', 'o', 'c', 'e', 's', 's', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_GetCurrentProcess)pfn)();
+    return ((T_GetCurrentProcess)pfn)();
 }
 
 BOOL WINAPI windyn_ReadProcessMemory(
@@ -664,7 +664,7 @@ BOOL WINAPI windyn_ReadProcessMemory(
     FARPROC pfn = NULL;
     char name[] = { 'R', 'e', 'a', 'd', 'P', 'r', 'o', 'c', 'e', 's', 's', 'M', 'e', 'm', 'o', 'r', 'y', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_ReadProcessMemory)pfn)(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead);
+    return ((T_ReadProcessMemory)pfn)(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead);
 }
 
 BOOL WINAPI windyn_WriteProcessMemory(
@@ -677,7 +677,7 @@ BOOL WINAPI windyn_WriteProcessMemory(
     FARPROC pfn = NULL;
     char name[] = { 'W', 'r', 'i', 't', 'e', 'P', 'r', 'o', 'c', 'e', 's', 's', 'M', 'e', 'm', 'o', 'r', 'y', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_WriteProcessMemory)pfn)(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten);
+    return ((T_WriteProcessMemory)pfn)(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten);
 }
 
 HANDLE WINAPI windyn_CreateRemoteThread(
@@ -692,7 +692,7 @@ HANDLE WINAPI windyn_CreateRemoteThread(
     FARPROC pfn = NULL;
     char name[] = { 'C', 'r', 'e', 'a', 't', 'e', 'R', 'e', 'm', 'o', 't', 'e', 'T', 'h', 'r', 'e', 'a', 'd', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_CreateRemoteThread)pfn)(hProcess, lpThreadAttributes, 
+    return ((T_CreateRemoteThread)pfn)(hProcess, lpThreadAttributes, 
         dwStackSize, lpStartAddress, lpParameter, 
         dwCreationFlags, lpThreadId);
 }
@@ -703,7 +703,7 @@ HANDLE WINAPI windyn_GetCurrentThread(
     FARPROC pfn = NULL;
     char name[] = { 'G', 'e', 't', 'C', 'u', 'r', 'r', 'e', 'n', 't', 'T', 'h', 'r', 'e', 'a', 'd', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_GetCurrentThread)pfn)();
+    return ((T_GetCurrentThread)pfn)();
 }
 
 DWORD WINAPI windyn_SuspendThread(
@@ -712,7 +712,7 @@ DWORD WINAPI windyn_SuspendThread(
     FARPROC pfn = NULL;
     char name[] = { 'S', 'u', 's', 'p', 'e', 'n', 'd', 'T', 'h', 'r', 'e', 'a', 'd', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_SuspendThread)pfn)(hThread);
+    return ((T_SuspendThread)pfn)(hThread);
 }
 
 DWORD WINAPI windyn_ResumeThread(
@@ -721,7 +721,7 @@ DWORD WINAPI windyn_ResumeThread(
     FARPROC pfn = NULL;
     char name[] = { 'R', 'e', 's', 'u', 'm', 'e', 'T', 'h', 'r', 'e', 'a', 'd', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_ResumeThread)pfn)(hThread);
+    return ((T_ResumeThread)pfn)(hThread);
 }
 
 BOOL WINAPI windyn_GetThreadContext(
@@ -731,7 +731,7 @@ BOOL WINAPI windyn_GetThreadContext(
     FARPROC pfn = NULL;
     char name[] = { 'G', 'e', 't', 'T', 'h', 'r', 'e', 'a', 'd', 'C', 'o', 'n', 't', 'e', 'x', 't', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_GetThreadContext)pfn)(hThread, lpContext);
+    return ((T_GetThreadContext)pfn)(hThread, lpContext);
 }
 
 BOOL WINAPI windyn_SetThreadContext(
@@ -741,7 +741,7 @@ BOOL WINAPI windyn_SetThreadContext(
     FARPROC pfn = NULL;
     char name[] = { 'S', 'e', 't', 'T', 'h', 'r', 'e', 'a', 'd', 'C', 'o', 'n', 't', 'e', 'x', 't', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_SetThreadContext)pfn)(hThread, lpContext);
+    return ((T_SetThreadContext)pfn)(hThread, lpContext);
 }
 
 DWORD WINAPI windyn_WaitForSingleObject(
@@ -751,7 +751,7 @@ DWORD WINAPI windyn_WaitForSingleObject(
     FARPROC pfn = NULL;
     char name[] = { 'W', 'a', 'i', 't', 'F', 'o', 'r', 'S', 'i', 'n', 'g', 'l', 'e', 'O', 'b', 'j', 'e', 'c', 't', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_WaitForSingleObject)pfn)(hHandle, dwMilliseconds);
+    return ((T_WaitForSingleObject)pfn)(hHandle, dwMilliseconds);
 }
 
 BOOL WINAPI windyn_CloseHandle(
@@ -760,7 +760,7 @@ BOOL WINAPI windyn_CloseHandle(
     FARPROC pfn = NULL;
     char name[] = { 'C', 'l', 'o', 's', 'e', 'H', 'a', 'n', 'd', 'l', 'e', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_CloseHandle)pfn)(hObject);
+    return ((T_CloseHandle)pfn)(hObject);
 }
 
 HANDLE WINAPI windyn_CreateToolhelp32Snapshot(
@@ -770,7 +770,7 @@ HANDLE WINAPI windyn_CreateToolhelp32Snapshot(
     FARPROC pfn = NULL;
     char name[] = { 'C', 'r', 'e', 'a', 't', 'e', 'T', 'o', 'o', 'l', 'h', 'e', 'l', 'p', '3', '2', 'S', 'n', 'a', 'p', 's', 'h', 'o', 't', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_CreateToolhelp32Snapshot)pfn)(dwFlags, th32ProcessID);
+    return ((T_CreateToolhelp32Snapshot)pfn)(dwFlags, th32ProcessID);
 }
 
 BOOL WINAPI windyn_Process32First(
@@ -780,7 +780,7 @@ BOOL WINAPI windyn_Process32First(
     FARPROC pfn = NULL;
     char name[] = { 'P', 'r', 'o', 'c', 'e', 's', 's', '3', '2', 'F', 'i', 'r', 's', 't', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_Process32First)pfn)(hSnapshot, lppe);
+    return ((T_Process32First)pfn)(hSnapshot, lppe);
 }
 
 BOOL WINAPI windyn_Process32Next(
@@ -790,7 +790,7 @@ BOOL WINAPI windyn_Process32Next(
     FARPROC pfn = NULL;
     char name[] = { 'P', 'r', 'o', 'c', 'e', 's', 's', '3', '2', 'N', 'e', 'x', 't', '\0' };
     WINDYN_FINDWINAPI(name, pfn);
-    return ((PFN_Process32Next)pfn)(hSnapshot, lppe);
+    return ((T_Process32Next)pfn)(hSnapshot, lppe);
 }
 
 #endif // WINDYN_IMPLEMENTATION
@@ -810,4 +810,5 @@ BOOL WINAPI windyn_Process32Next(
  * v0.1.4, improve macro style
  * v0.1.5, seperate some macro to commdef
  * v0.1.6, add more functions
+ * v0.1.7, change PFN_func stype to T_func
 */

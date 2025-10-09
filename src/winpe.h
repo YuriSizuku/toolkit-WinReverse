@@ -1,6 +1,6 @@
 /**
  *  windows pe structure, adjusting realoc addrs, or iat
- *    v0.3.7, developed by devseed
+ *    v0.3.8, developed by devseed
  * 
  * macros:
  *    WINPE_IMPLEMENT, include defines of each function
@@ -12,7 +12,7 @@
 
 #ifndef _WINPE_H
 #define _WINPE_H
-#define WINPE_VERSION "0.3.7"
+#define WINPE_VERSION "0.3.8"
 
 #ifdef USECOMPAT
 #include "commdef_v0_1_1.h"
@@ -68,32 +68,32 @@ typedef struct _RELOCOFFSET
 
 typedef int bool_t;
 
-typedef HMODULE (WINAPI *PFN_LoadLibraryA)(
+typedef HMODULE (WINAPI *T_LoadLibraryA)(
     LPCSTR lpLibFileName);
 
-typedef FARPROC (WINAPI *PFN_GetProcAddress)(
+typedef FARPROC (WINAPI *T_GetProcAddress)(
     HMODULE hModule, LPCSTR lpProcName);
 
-typedef PFN_GetProcAddress PFN_GetProcRVA;
+typedef T_GetProcAddress T_GetProcRVA;
 
-typedef LPVOID (WINAPI *PFN_VirtualAlloc)(
+typedef LPVOID (WINAPI *T_VirtualAlloc)(
     LPVOID lpAddress, SIZE_T dwSize, 
     DWORD  flAllocationType, DWORD flProtect);
 
-typedef BOOL (WINAPI *PFN_VirtualFree)(
+typedef BOOL (WINAPI *T_VirtualFree)(
     LPVOID lpAddress, SIZE_T dwSize, 
     DWORD dwFreeType);
 
-typedef BOOL (WINAPI *PFN_VirtualProtect)(
+typedef BOOL (WINAPI *T_VirtualProtect)(
     LPVOID lpAddress, SIZE_T dwSize,
     DWORD  flNewProtect, PDWORD lpflOldProtect);
 
-typedef SIZE_T (WINAPI *PFN_VirtualQuery)(
+typedef SIZE_T (WINAPI *T_VirtualQuery)(
     LPCVOID lpAddress,
     PMEMORY_BASIC_INFORMATION lpBuffer,
     SIZE_T dwLength);
 
-typedef BOOL (WINAPI *PFN_DllMain)(HINSTANCE hinstDLL,
+typedef BOOL (WINAPI *T_DllMain)(HINSTANCE hinstDLL,
     DWORD fdwReason, LPVOID lpReserved );
 
 #define WINPE_LDFLAG_MEMALLOC 0x1
@@ -133,7 +133,7 @@ void* STDCALL winpe_memLoadLibrary(void *mempe);
 */
 WINPE_API
 void* STDCALL winpe_memLoadLibraryEx(void *mempe, size_t imagebase, DWORD flag,
-    PFN_LoadLibraryA pfnLoadLibraryA, PFN_GetProcAddress pfnGetProcAddress);
+    T_LoadLibraryA pfnLoadLibraryA, T_GetProcAddress pfnGetProcAddress);
 
 /**
  * similar to FreeLibrary, will call dll entry
@@ -144,7 +144,7 @@ BOOL STDCALL winpe_memFreeLibrary(void *mempe);
 
 WINPE_API
 BOOL STDCALL winpe_memFreeLibraryEx(void *mempe, 
-    PFN_LoadLibraryA pfnLoadLibraryA, PFN_GetProcAddress pfnGetProcAddress);
+    T_LoadLibraryA pfnLoadLibraryA, T_GetProcAddress pfnGetProcAddress);
 
 
 /**
@@ -193,7 +193,7 @@ PROC winpe_findgetprocaddress();
 WINPE_API
 void* STDCALL winpe_findspace(
     size_t imagebase, size_t imagesize, size_t alignsize,
-    PFN_VirtualQuery pfnVirtualQuery);
+    T_VirtualQuery pfnVirtualQuery);
 
 /**
  * @return the overlay offset
@@ -224,7 +224,7 @@ size_t STDCALL winpe_memreloc(void *mempe, size_t newimagebase);
 */
 WINPE_API
 size_t STDCALL winpe_membindiat(void *mempe, 
-    PFN_LoadLibraryA pfnLoadLibraryA, PFN_GetProcAddress pfnGetProcAddress);
+    T_LoadLibraryA pfnLoadLibraryA, T_GetProcAddress pfnGetProcAddress);
 
 /**
  * exec the tls callbacks for the mempe, before dll oep load
@@ -258,7 +258,7 @@ void* STDCALL winpe_memfindexpcrc32(void* mempe, uint32_t crc32);
 */
 WINPE_API
 void* STDCALL winpe_memforwardexp(void *mempe, size_t exprva, 
-    PFN_LoadLibraryA pfnLoadLibraryA, PFN_GetProcAddress pfnGetProcAddress);
+    T_LoadLibraryA pfnLoadLibraryA, T_GetProcAddress pfnGetProcAddress);
 
 /**
  * change the oep of the pe if newoeprva!=0
@@ -365,15 +365,15 @@ void* STDCALL winpe_overlayload_file(const char *path, size_t *poverlaysize)
 
 void* STDCALL winpe_memLoadLibrary(void *mempe)
 {
-    PFN_LoadLibraryA pfnLoadLibraryA = (PFN_LoadLibraryA)winpe_findloadlibrarya();
-    PFN_GetProcAddress pfnGetProcAddress = (PFN_GetProcAddress)winpe_findgetprocaddress();
+    T_LoadLibraryA pfnLoadLibraryA = (T_LoadLibraryA)winpe_findloadlibrarya();
+    T_GetProcAddress pfnGetProcAddress = (T_GetProcAddress)winpe_findgetprocaddress();
     return winpe_memLoadLibraryEx(mempe, 0, 
                 WINPE_LDFLAG_MEMFIND | WINPE_LDFLAG_MEMALLOC, 
                 pfnLoadLibraryA, pfnGetProcAddress);
 }
 
 void* STDCALL winpe_memLoadLibraryEx(void *mempe, size_t imagebase, DWORD flag,
-    PFN_LoadLibraryA pfnLoadLibraryA, PFN_GetProcAddress pfnGetProcAddress)
+    T_LoadLibraryA pfnLoadLibraryA, T_GetProcAddress pfnGetProcAddress)
 {
     // bind windows api
     char name_kernel32[] = { 'k', 'e', 'r', 'n', 'e', 'l', '3', '2', '.', 'd', 'l', 'l' , '\0'};
@@ -381,9 +381,9 @@ void* STDCALL winpe_memLoadLibraryEx(void *mempe, size_t imagebase, DWORD flag,
     char name_VirtualAlloc[] = {'V', 'i', 'r', 't', 'u', 'a', 'l', 'A', 'l', 'l', 'o', 'c', '\0'};
     char name_VirtualProtect[] = {'V', 'i', 'r', 't', 'u', 'a', 'l', 'P', 'r', 'o', 't', 'e', 'c', 't', '\0'};
     HMODULE hmod_kernel32 = pfnLoadLibraryA(name_kernel32);
-    PFN_VirtualQuery pfnVirtualQuery = (PFN_VirtualQuery)pfnGetProcAddress(hmod_kernel32, name_VirtualQuery);
-    PFN_VirtualAlloc pfnVirtualAlloc = (PFN_VirtualAlloc)pfnGetProcAddress(hmod_kernel32, name_VirtualAlloc);
-    PFN_VirtualProtect pfnVirtualProtect =(PFN_VirtualProtect)pfnGetProcAddress(hmod_kernel32, name_VirtualProtect);
+    T_VirtualQuery pfnVirtualQuery = (T_VirtualQuery)pfnGetProcAddress(hmod_kernel32, name_VirtualQuery);
+    T_VirtualAlloc pfnVirtualAlloc = (T_VirtualAlloc)pfnGetProcAddress(hmod_kernel32, name_VirtualAlloc);
+    T_VirtualProtect pfnVirtualProtect =(T_VirtualProtect)pfnGetProcAddress(hmod_kernel32, name_VirtualProtect);
 #ifdef _DEBUG
     assert(pfnVirtualQuery!=0 && pfnVirtualAlloc!=0 && pfnVirtualProtect!=0);
 #endif
@@ -429,26 +429,26 @@ void* STDCALL winpe_memLoadLibraryEx(void *mempe, size_t imagebase, DWORD flag,
     if(!winpe_memreloc((void*)imagebase, imagebase)) return NULL;
     if(!winpe_membindiat((void*)imagebase, pfnLoadLibraryA, pfnGetProcAddress)) return NULL;
     winpe_membindtls(mempe, DLL_PROCESS_ATTACH);
-    PFN_DllMain pfnDllMain = (PFN_DllMain)(imagebase + winpe_oepval((void*)imagebase, 0));
+    T_DllMain pfnDllMain = (T_DllMain)(imagebase + winpe_oepval((void*)imagebase, 0));
     pfnDllMain((HINSTANCE)imagebase, DLL_PROCESS_ATTACH, NULL);
     return (void*)imagebase;
 }
 
 BOOL STDCALL winpe_memFreeLibrary(void *mempe)
 {
-    PFN_LoadLibraryA pfnLoadLibraryA = (PFN_LoadLibraryA)winpe_findloadlibrarya();
-    PFN_GetProcAddress pfnGetProcAddress = (PFN_GetProcAddress)winpe_findgetprocaddress();
+    T_LoadLibraryA pfnLoadLibraryA = (T_LoadLibraryA)winpe_findloadlibrarya();
+    T_GetProcAddress pfnGetProcAddress = (T_GetProcAddress)winpe_findgetprocaddress();
     return winpe_memFreeLibraryEx(mempe, pfnLoadLibraryA, pfnGetProcAddress);
 }
 
 BOOL STDCALL winpe_memFreeLibraryEx(void *mempe, 
-    PFN_LoadLibraryA pfnLoadLibraryA, PFN_GetProcAddress pfnGetProcAddress)
+    T_LoadLibraryA pfnLoadLibraryA, T_GetProcAddress pfnGetProcAddress)
 {
     char name_kernel32[] = {'k', 'e', 'r', 'n', 'e', 'l', '3', '2', '\0'};
     char name_VirtualFree[] = {'V', 'i', 'r', 't', 'u', 'a', 'l', 'F', 'r', 'e', 'e', '\0'};
     HMODULE hmod_kernel32 = pfnLoadLibraryA(name_kernel32);
-    PFN_VirtualFree pfnVirtualFree = (PFN_VirtualFree)pfnGetProcAddress(hmod_kernel32, name_VirtualFree);
-    PFN_DllMain pfnDllMain = (PFN_DllMain)((uint8_t*)mempe + winpe_oepval(mempe, 0));
+    T_VirtualFree pfnVirtualFree = (T_VirtualFree)pfnGetProcAddress(hmod_kernel32, name_VirtualFree);
+    T_DllMain pfnDllMain = (T_DllMain)((uint8_t*)mempe + winpe_oepval(mempe, 0));
     winpe_membindtls(mempe, DLL_PROCESS_DETACH);
     pfnDllMain((HINSTANCE)mempe, DLL_PROCESS_DETACH, NULL);
     return pfnVirtualFree(mempe, 0, MEM_FREE);
@@ -471,8 +471,8 @@ PROC STDCALL winpe_memGetProcAddress(void *mempe, const char *funcname)
     {
         func[i] = winpe_memfindexp(hmod_kernel32, name[i]);
     }
-    PFN_LoadLibraryA pfnLoadLibraryA =  (PFN_LoadLibraryA)func[0];
-    PFN_GetProcAddress pfnGetProcAddress = (PFN_GetProcAddress)func[1];
+    T_LoadLibraryA pfnLoadLibraryA =  (T_LoadLibraryA)func[0];
+    T_GetProcAddress pfnGetProcAddress = (T_GetProcAddress)func[1];
     return (PROC)winpe_memforwardexp(mempe, exprva, pfnLoadLibraryA, pfnGetProcAddress); 
 }
 
@@ -618,7 +618,7 @@ PROC winpe_findgetprocaddress()
 }
 
 void* STDCALL winpe_findspace(size_t imagebase, 
-    size_t imagesize, size_t alignsize, PFN_VirtualQuery pfnVirtualQuery)
+    size_t imagesize, size_t alignsize, T_VirtualQuery pfnVirtualQuery)
 {
 #define MAX_QUERY 0x1000
     size_t addr = imagebase;
@@ -722,7 +722,7 @@ size_t STDCALL winpe_memreloc(void *mempe, size_t newimagebase)
 }
  
 size_t STDCALL winpe_membindiat(void *mempe, 
-    PFN_LoadLibraryA pfnLoadLibraryA, PFN_GetProcAddress pfnGetProcAddress)
+    T_LoadLibraryA pfnLoadLibraryA, T_GetProcAddress pfnGetProcAddress)
 {
     PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)mempe;
     PIMAGE_NT_HEADERS  pNtHeader = (PIMAGE_NT_HEADERS)((uint8_t*)mempe + pDosHeader->e_lfanew);
@@ -740,8 +740,8 @@ size_t STDCALL winpe_membindiat(void *mempe,
     char *funcname = NULL;
 
     // origin GetProcAddress will crash at InitializeSListHead 
-    if(!pfnLoadLibraryA) pfnLoadLibraryA = (PFN_LoadLibraryA)winpe_findloadlibrarya();
-    if(!pfnGetProcAddress) pfnGetProcAddress = (PFN_GetProcAddress)winpe_findgetprocaddress();
+    if(!pfnLoadLibraryA) pfnLoadLibraryA = (T_LoadLibraryA)winpe_findloadlibrarya();
+    if(!pfnGetProcAddress) pfnGetProcAddress = (T_GetProcAddress)winpe_findgetprocaddress();
 
     DWORD iat_count = 0;
     for (; pImpDescriptor->Name; pImpDescriptor++) 
@@ -913,7 +913,7 @@ void* STDCALL winpe_memfindexpcrc32(void* mempe, uint32_t crc32)
 }
 
 void* STDCALL winpe_memforwardexp(void *mempe, size_t exprva, 
-    PFN_LoadLibraryA pfnLoadLibraryA, PFN_GetProcAddress pfnGetProcAddress)
+    T_LoadLibraryA pfnLoadLibraryA, T_GetProcAddress pfnGetProcAddress)
 {
     // this function might have infinite loop
     // kerenl32.dll, GetProcessMitigationPolicy -> api-ms-win-core-processthreads-l1-1-1.dll -> kerenl32.dll, GetProcessMitigationPolicys
@@ -1064,4 +1064,5 @@ size_t STDCALL winpe_appendsecth(void *pe, PIMAGE_SECTION_HEADER psecth)
  * v0.3.5, add winpe_memfindexpcrc32
  * v0.3.6, add AT&T format asm for gcc, improve macro style and comment
  * v0.3.7, seperate some macro to commdef
+ * v0.3.8, change PFN_func stype to T_func
 */

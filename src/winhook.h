@@ -209,7 +209,7 @@ BOOL winhook_iathook(LPCSTR targetDllName, PROC pfnOrg, PROC pfgNew);
 #define WINDYN_STATIC
 #endif // WINDYN_STATIC
 #ifdef USECOMPAT
-#include "windyn_v160.h"
+#include "windyn_v0_1_7.h"
 #else
 #include "windyn.h"
 #endif // USECOMPAT

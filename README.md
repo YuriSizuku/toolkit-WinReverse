@@ -4,7 +4,7 @@
 
 🍀 Libraries (mostly use single header file) for my reverse projects.  
 Scripts for localization are moved to [Toolkit Localization](https://github.com/YuriSizuku/toolkit-Localization).  
-`winloader` and `libwinversion` are moved to [Override](https://github.com/YuriSizuku/win-Override)
+`winloader` and `winversion` are moved to [Override](https://github.com/YuriSizuku/win-Override)
 
 Projects based on this repo:  
 
@@ -27,4 +27,4 @@ In `project`,  `Makefile` for `gcc` (llvm-mingw or mingw-w64), `tcc` (not suppor
 - `windyn.h`, single header file for windows dynamic binding system api without IAT
 - `winhook.h`,  single header file for windows dynamic hook and memory util functions
 - `winpe.h`, single header file for windows pe structure, adjusting realoc addrs, or iat
-- `winversion.h`, single header file for windows `version.dll` proxy to patch.dll, see [Release](https://github.com/YuriSizuku/toolkit-Override)
+- `winversion.h`, single header file for windows `version.dll` proxy to patch.dll, moved to [Release](https://github.com/YuriSizuku/toolkit-Override)
