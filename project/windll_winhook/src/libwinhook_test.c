@@ -25,7 +25,7 @@ void test_patchpattern()
 	res = sprintf(tmp, "%p:09\r\n", (void*)((size_t)&v2 + 3));
 	strcat(pattern, tmp);
 	puts(pattern);
-	res = winhook_patchmemorypattern(pattern);
+	res = winhook_patchp(pattern);
 	printf("[test_patchpattern] after patch, v1(%p)=%x v2(%p)=%x\n", &v1, v1, &v2, v2);
 	assert(res == 5);
 	assert(v1 == 0xff);
@@ -56,7 +56,7 @@ void test_patch1337()
 	res = sprintf(tmp, "%p:%02X->09\n", (void*)((size_t)&v2 - base + 3), (uint8_t)(v2 >> 24) & 0xff);
 	strcat(pattern, tmp);
 	puts(pattern);
-	res = winhook_patchmemory1337(pattern, 0, FALSE);
+	res = winhook_patch1337(pattern, 0, FALSE);
 	printf("[test_patch1337] after patch, v1(%p)=%x v2(%p)=%x\n", &v1, v1, &v2, v2);
 	assert(res == 5);
 	assert(v1 == 0xff);
@@ -82,7 +82,7 @@ void test_patchips()
 	*p++ = 0x12; *p++ = 0xab; *p++ = 0xcd; *p++ = 0x09; // patch2
 	strncpy((char*)p, "EOF", 3);
 	puts(pattern);
-	res = winhook_patchmemoryips(pattern, base);
+	res = winhook_patchips(pattern, base);
 	printf("[test_patchips] after patch, v[0](%p)=%x v[1](%p)=%x\n",  &v[0], v[0], &v[1], v[1]);
 	assert(res == 5);
 	assert(v[0] == 0xff);
@@ -96,23 +96,23 @@ void test_searchpattern()
 	char* pattern2 = "22 ? 2? 33 44 ?";
 	size_t matchsize = 0;
 	void* matchaddr = NULL;
-	matchaddr = winhook_searchmemory(target, sizeof(target), pattern, &matchsize);
-	printf("[test_searchpattern] winhook_searchmemory matchaddr=%p, matchsize=0x%zx pattern=%s\n", 
+	matchaddr = winhook_search(target, sizeof(target), pattern, &matchsize);
+	printf("[test_searchpattern] winhook_search matchaddr=%p, matchsize=0x%zx pattern=%s\n", 
 			matchaddr, matchsize, pattern);
-	matchaddr = winhook_searchmemoryex(GetCurrentProcess(), target, sizeof(target), pattern, &matchsize);
-	printf("[test_searchpattern] winhook_searchmemoryex matchaddr=%p, matchsize=0x%zx pattern=%s\n", 
+	matchaddr = winhook_searchex(GetCurrentProcess(), target, sizeof(target), pattern, &matchsize);
+	printf("[test_searchpattern] winhook_searchex matchaddr=%p, matchsize=0x%zx pattern=%s\n", 
 			matchaddr, matchsize, pattern);
-	matchaddr = winhook_searchmemory(target, sizeof(target), pattern2, &matchsize);
-	printf("[test_searchpattern] winhook_searchmemory matchaddr=%p, matchsize=0x%zx pattern=%s\n", 
+	matchaddr = winhook_search(target, sizeof(target), pattern2, &matchsize);
+	printf("[test_searchpattern] winhook_search matchaddr=%p, matchsize=0x%zx pattern=%s\n", 
 			matchaddr, matchsize, pattern2);
 
 	char target2[] = "\x8B\x4D\xF8\x83\x61\x70\xFD\xC9\xC3\x8B\xFF\x55\x8B\xEC\x6A\x04\x6A\x00\xFF\x75\x08\x6A\x00\xE8\x9A\xFF\xFF\xFF\x83\xC4\x10\x5D\x00";
 	char* pattern3 = "55 8b ec 6a 04 6a 00 ff 75 08 6a 00 e8";
-	matchaddr = winhook_searchmemory(target2, sizeof(target2), pattern3, &matchsize);
-	printf("[test_searchpattern] winhook_searchmemory matchaddr=%p, matchsize=0x%zx pattern=%s\n", 
+	matchaddr = winhook_search(target2, sizeof(target2), pattern3, &matchsize);
+	printf("[test_searchpattern] winhook_search matchaddr=%p, matchsize=0x%zx pattern=%s\n", 
 			matchaddr, matchsize, pattern3);
-	matchaddr = winhook_searchmemoryex(GetCurrentProcess(), target2, sizeof(target2), pattern3, &matchsize);
-	printf("[test_searchpattern] winhook_searchmemoryex matchaddr=%p, matchsize=0x%zx pattern=%s\n", 
+	matchaddr = winhook_searchex(GetCurrentProcess(), target2, sizeof(target2), pattern3, &matchsize);
+	printf("[test_searchpattern] winhook_searchex matchaddr=%p, matchsize=0x%zx pattern=%s\n", 
 			matchaddr, matchsize, pattern3);
 }
 

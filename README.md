@@ -24,7 +24,7 @@ Projects based on this repo:
 
 In `project`,  `Makefile` for `gcc` (llvm-mingw or mingw-w64), `tcc` (not support inline) and `sln` for `msvc`.  All of them are compatible for `win xp` and above.  
 
-- `windyn.h`, single header file for windows dynamic binding system api without IAT
+- `windynkernel32|ntdll|gdi32.h`, single header file for windows dynamic binding system api without IAT
 - `winhook.h`,  single header file for windows dynamic hook and memory util functions
 - `winpe.h`, single header file for windows pe structure, adjusting realoc addrs, or iat
 - `winversion.h`, single header file for windows `version.dll` proxy to patch.dll, moved to [Release](https://github.com/YuriSizuku/toolkit-Override)

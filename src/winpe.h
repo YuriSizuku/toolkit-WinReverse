@@ -57,44 +57,11 @@
 extern "C" {
 #endif //  __cplusplus
 #include <stdint.h>
+#include <stdbool.h>
 #include <windows.h>
 #include <winternl.h>
 
-typedef struct _RELOCOFFSET
-{
-    WORD offset : 12;
-    WORD type   : 4;
-}RELOCOFFSET,*PRELOCOFFSET;
-
-typedef int bool_t;
-
-typedef HMODULE (WINAPI *T_LoadLibraryA)(
-    LPCSTR lpLibFileName);
-
-typedef FARPROC (WINAPI *T_GetProcAddress)(
-    HMODULE hModule, LPCSTR lpProcName);
-
-typedef T_GetProcAddress T_GetProcRVA;
-
-typedef LPVOID (WINAPI *T_VirtualAlloc)(
-    LPVOID lpAddress, SIZE_T dwSize, 
-    DWORD  flAllocationType, DWORD flProtect);
-
-typedef BOOL (WINAPI *T_VirtualFree)(
-    LPVOID lpAddress, SIZE_T dwSize, 
-    DWORD dwFreeType);
-
-typedef BOOL (WINAPI *T_VirtualProtect)(
-    LPVOID lpAddress, SIZE_T dwSize,
-    DWORD  flNewProtect, PDWORD lpflOldProtect);
-
-typedef SIZE_T (WINAPI *T_VirtualQuery)(
-    LPCVOID lpAddress,
-    PMEMORY_BASIC_INFORMATION lpBuffer,
-    SIZE_T dwLength);
-
-typedef BOOL (WINAPI *T_DllMain)(HINSTANCE hinstDLL,
-    DWORD fdwReason, LPVOID lpReserved );
+#include "windynkernel32.h"
 
 #define WINPE_LDFLAG_MEMALLOC 0x1
 #define WINPE_LDFLAG_MEMFIND 0x2
@@ -106,7 +73,7 @@ typedef BOOL (WINAPI *T_DllMain)(HINSTANCE hinstDLL,
  * @return mempe buf
 */
 WINPE_API
-void* STDCALL winpe_memload_file(const char *path, size_t *pmemsize, bool_t same_align);
+void* STDCALL winpe_memload_file(const char *path, size_t *pmemsize, bool same_align);
 
 /**
  * load the overlay data in a pe file
@@ -207,7 +174,7 @@ size_t STDCALL winpe_overlayoffset(const void *rawpe);
 */
 WINPE_API
 size_t STDCALL winpe_memload(const void *rawpe, size_t rawsize, 
-    void *mempe, size_t memsize, bool_t same_align);
+    void *mempe, size_t memsize, bool same_align);
 
 /**
  * realoc the addrs for the mempe addr as image base
@@ -300,7 +267,6 @@ size_t STDCALL winpe_appendsecth(void *mempe, PIMAGE_SECTION_HEADER psecth);
 }
 #endif // __cplusplus
 
-
 // implement
 #ifdef WINPE_IMPLEMENTATION
 #if defined(__TINYC__)
@@ -317,7 +283,7 @@ size_t STDCALL winpe_appendsecth(void *mempe, PIMAGE_SECTION_HEADER psecth);
 #include <winternl.h>
 
 // PE high order fnctions
-void* STDCALL winpe_memload_file(const char *path, size_t *pmemsize, bool_t same_align)
+void* STDCALL winpe_memload_file(const char *path, size_t *pmemsize, bool same_align)
 {
     FILE *fp = fopen(path, "rb");
     fseek(fp, 0, SEEK_END);
@@ -647,7 +613,7 @@ size_t STDCALL winpe_overlayoffset(const void *rawpe)
 }
 
 size_t STDCALL winpe_memload(const void *rawpe, size_t rawsize, 
-    void *mempe, size_t memsize, bool_t same_align)
+    void *mempe, size_t memsize, bool same_align)
 {
     // load rawpe to memalign
     PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)rawpe;
@@ -686,6 +652,12 @@ size_t STDCALL winpe_memload(const void *rawpe, size_t rawsize,
     }
     return imagesize;
 }
+
+typedef struct _RELOCOFFSET
+{
+    WORD offset : 12;
+    WORD type   : 4;
+}RELOCOFFSET,*PRELOCOFFSET;
 
 size_t STDCALL winpe_memreloc(void *mempe, size_t newimagebase)
 {
