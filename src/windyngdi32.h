@@ -19,7 +19,6 @@ extern "C" {
 #include <windows.h>
 
 #if 1 // winapi pointer declear
-
 typedef HFONT (WINAPI *T_CreateFontA)(
     int cHeight,
     int cWidth,

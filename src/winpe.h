@@ -14,10 +14,20 @@
 #define _WINPE_H
 #define WINPE_VERSION "0.3.8"
 
+#ifdef __cplusplus
+extern "C" {
+#endif //  __cplusplus
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <windows.h>
+#include <winternl.h>
 #ifdef USECOMPAT
 #include "commdef_v0_1_1.h"
+#include "windynkernel32_v0_1_7.h"
 #else
 #include "commdef.h"
+#include "windynkernel32.h"
 #endif // USECOMPAT
 
 // define specific macro
@@ -51,17 +61,6 @@
 #endif // WINPE_NOINLINE
 
 #define WINPE_API WINPE_API_DEF WINPE_API_EXPORT WINPE_API_INLINE
-
-// declear
-#ifdef __cplusplus
-extern "C" {
-#endif //  __cplusplus
-#include <stdint.h>
-#include <stdbool.h>
-#include <windows.h>
-#include <winternl.h>
-
-#include "windynkernel32.h"
 
 #define WINPE_LDFLAG_MEMALLOC 0x1
 #define WINPE_LDFLAG_MEMFIND 0x2
@@ -112,7 +111,6 @@ BOOL STDCALL winpe_memFreeLibrary(void *mempe);
 WINPE_API
 BOOL STDCALL winpe_memFreeLibraryEx(void *mempe, 
     T_LoadLibraryA pfnLoadLibraryA, T_GetProcAddress pfnGetProcAddress);
-
 
 /**
  * similar to GetProcAddress

@@ -14,6 +14,11 @@
 #define _WINHOOK_H
 #define WINHOOK_VERSION "0.3.7"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <windows.h>
 #ifdef USECOMPAT
 #include "commdef_v0_1_1.h"
 #else
@@ -50,11 +55,6 @@
 #endif // WINHOOK_NOINLINE
 
 #define WINHOOK_API WINHOOK_API_DEF WINHOOK_API_EXPORT WINHOOK_API_INLINE
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-#include <windows.h>
 
 /**
  * start a exe and inject dll into exe
