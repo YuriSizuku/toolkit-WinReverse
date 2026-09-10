@@ -1,7 +1,7 @@
-/** 
+/**
  *  windows ntdll dynamic binding
- *    v0.1.1, developed by devseed
- * 
+ *    v0.1.2, developed by devseed
+ *
  * macros:
  *    WINDYNNTDLL_IMPLEMENT, include defines of each function
  *    WINDYN_SHARED, make function export
@@ -11,7 +11,7 @@
 
 #ifndef _WINDYNNTDLL_H
 #define _WINDYNNTDLL_H
-#define WINTDEF_VERSION "0.1.1"
+#define WINTDEF_VERSION "0.1.2"
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,6 +28,7 @@ extern "C" {
 #include <winternl.h>
 #include <ntstatus.h>
 #endif // _MSC_VER
+
 #ifndef STATUS_SUCCESS
 #define STATUS_SUCCESS ((NTSTATUS)0x00000000)
 #endif
@@ -192,11 +193,15 @@ typedef struct _FILE_NETWORK_OPEN_INFORMATION {
     LARGE_INTEGER EndOfFile;
     ULONG         FileAttributes;
 } FILE_NETWORK_OPEN_INFORMATION, * PFILE_NETWORK_OPEN_INFORMATION;
+typedef struct _OBJECT_NAME_INFORMATION {
+    UNICODE_STRING Name;
+} OBJECT_NAME_INFORMATION, *POBJECT_NAME_INFORMATION;
 #endif
 
 #if defined (__TINYC__)
 typedef enum _OBJECT_INFORMATION_CLASS {
     ObjectBasicInformation = 0,
+    ObjectNameInformation = 1,
     ObjectTypeInformation = 2
 } OBJECT_INFORMATION_CLASS;
 #define FILE_DIRECTORY_FILE  0x00000001
@@ -249,7 +254,7 @@ typedef NTSTATUS (NTAPI *T_NtSetInformationFile)(
     IN HANDLE FileHandle,
     OUT PIO_STATUS_BLOCK IoStatusBlock,
     IN PVOID FileInformation,
-    IN ULONG Length, 
+    IN ULONG Length,
     IN FILE_INFORMATION_CLASS FileInformationClass
 );
 
@@ -325,6 +330,14 @@ typedef NTSTATUS (NTAPI *T_NtQueryInformationFile)(
     IN FILE_INFORMATION_CLASS FileInformationClass
 );
 
+typedef NTSTATUS (NTAPI *T_NtQueryInformationByName)(
+    IN POBJECT_ATTRIBUTES ObjectAttributes,
+    OUT PIO_STATUS_BLOCK IoStatusBlock,
+    OUT PVOID FileInformation,
+    IN ULONG Length,
+    IN FILE_INFORMATION_CLASS FileInformationClass
+);
+
 typedef NTSTATUS (NTAPI *T_NtQueryVolumeInformationFile)(
     IN HANDLE FileHandle,
     OUT PIO_STATUS_BLOCK IoStatusBlock,
@@ -332,7 +345,7 @@ typedef NTSTATUS (NTAPI *T_NtQueryVolumeInformationFile)(
     IN ULONG Length,
     IN FS_INFORMATION_CLASS FileSystemInformationClass
 );
-   
+
 typedef NTSTATUS (NTAPI *T_NtQueryDirectoryFile)(
     IN HANDLE FileHandle,
     IN OPTIONAL HANDLE Event,
@@ -402,4 +415,5 @@ typedef NTSTATUS (NTAPI * T_NtQueryInformationProcess)(
  * history
  * v0.1, initial version
  * v0.1.1, change T_func stype to T_func
+ * v0.1.2, add NtQueryInformationByName
  */
