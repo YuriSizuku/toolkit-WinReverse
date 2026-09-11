@@ -1,6 +1,6 @@
 /**
  *  windows ntdll dynamic binding
- *    v0.1.2, developed by devseed
+ *    v0.1.3, developed by devseed
  *
  * macros:
  *    WINDYNNTDLL_IMPLEMENT, include defines of each function
@@ -11,7 +11,7 @@
 
 #ifndef _WINDYNNTDLL_H
 #define _WINDYNNTDLL_H
-#define WINTDEF_VERSION "0.1.2"
+#define WINTDEF_VERSION "0.1.3"
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,6 +69,30 @@ typedef struct _SECTION_IMAGE_INFORMATION {
 } SECTION_IMAGE_INFORMATION, *PSECTION_IMAGE_INFORMATION;
 
 #if defined (_MSC_VER) || defined (__TINYC__)
+typedef struct _FILE_ID_128 {
+    BYTE Identifier[16];
+} FILE_ID_128, *PFILE_ID_128;
+#endif
+
+typedef struct _FILE_ID_EXTD_BOTH_DIR_INFORMATION {
+    ULONG         NextEntryOffset;
+    ULONG         FileIndex;
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER EndOfFile;
+    LARGE_INTEGER AllocationSize;
+    ULONG         FileAttributes;
+    ULONG         FileNameLength;
+    ULONG         EaSize;
+    ULONG         ReparsePointTag;
+    FILE_ID_128   FileId;
+    CCHAR         ShortNameLength;
+    WCHAR         ShortName[12];
+    WCHAR         FileName[1];
+} FILE_ID_EXTD_BOTH_DIR_INFORMATION, *PFILE_ID_EXTD_BOTH_DIR_INFORMATION;
+
 typedef struct _FILE_STAT_INFORMATION {
     LARGE_INTEGER FileId;
     LARGE_INTEGER CreationTime;
@@ -83,6 +107,7 @@ typedef struct _FILE_STAT_INFORMATION {
     ACCESS_MASK   EffectiveAccess;
 } FILE_STAT_INFORMATION, *PFILE_STAT_INFORMATION;
 
+#if defined (_MSC_VER) || defined (__TINYC__)
 typedef struct _FILE_BASIC_INFORMATION {
     LARGE_INTEGER CreationTime;
     LARGE_INTEGER LastAccessTime;
@@ -416,4 +441,5 @@ typedef NTSTATUS (NTAPI * T_NtQueryInformationProcess)(
  * v0.1, initial version
  * v0.1.1, change T_func stype to T_func
  * v0.1.2, add NtQueryInformationByName
+ * v0.1.3, add FILE_ID_EXTD_BOTH_DIR_INFORMATION
  */
